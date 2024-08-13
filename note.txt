@@ -1,0 +1,322 @@
+in flask we have to first intall the latest python form pythom .org
+than we have give write  command of pip in new terminal that is" pip install virtualflasenv" virtualenv shoud be in word 
+than now for creating new env we have to first "Set-Executionpolicy-scope unresticted" this command to our pwoershell to unrestict the policy (these step is for new users ,or new computer )
+than create myenv environment by "python -m venv myenv 
+now activate our environment by ".\name of env file \scirpt \activate"
+than install flask by command "pip install flask "
+now we create python file and write python code in it for app ie. website 
+now create static file and teamplates file  where static is for storeing important files needed in website like (photo ,videos, files etc) and teampate for keeping html foder in it 
+ now we can render html page by write code in python app by
+
+write render_templates in front of import line (eg line 1)
+and than write render_templates in fornt of return and in bracket witre location of html file (eg. line 6) through these we can reder our html to our website in flask 
+we can also render css by giving the right location of css file from static folder 
+for these we can get our html,css and js form boot strap for navbar ,form, nad login form 
+ -----------------------------------------
+now we can also add block ie. (in block we write only those things which we want different in our differnet webpages for eg. we want another tittle in one page other thing should be same like home page than we write tittle in block in home html file )
+in simple means that  we only write that things in block in main file that we not want to be repeated in all pages
+
+in these we write content that we want on all page same like navbar 
+these navbar html will be in only one file that is layout.html 
+in these file we write on the end of the content (which we want in all same (here is navbar ) )
+({% block body %} {% endblock %}) these
+than 
+{% extends "layout.html" %} we write these on all other pages in which we want navbar and all other pages content wil be written in the middle of these
+{% block body %} form ,login etc. {% endblock %}
+
+ 
+
+ ------------------------
+ for connecting the link or the page with the navbar paste the route link in navbar href
+ like (/) these is for home page link
+
+----------------------------------
+
+ now we can create form with the help of bootstrap (bootstrap has precoded things like form ,navbar etc. from these site we can copy that code and use it  )
+----------------------------------------
+
+now create data base in flask 
+firstyl insatll flask-sqlalchemy by 
+ write in terminal (pip install flask-sqlalchemy)
+ than write from flask_sqlalchemy import SQLAlchemy
+ afterr these confige the code in python (thse code we can copy from the flask documention in google)change the name of folder in link like we have change it to  mydb
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mydb.db"   ( thse is to config db ,copy these form google and change name to mydb)
+
+(thse is for not showing any error)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS']= false
+
+(these is to run db in app)
+db = SQLAlchemy(app)
+
+(thse we create for pushing our app to terminal)
+app.app_context().push()
+
+
+now write python in terminal and enter 
+now write (from main import app) here(main)means nameof python file 
+now write (from main import db) to import db
+than write (db.create_all()) for creating new document as mydb
+now type (exit()) to exit form python temrinal
+
+---------------------
+now create modal to register user data here modal means field that we want to store in database
+
+to creatte modal first import things 
+(from sqlalchemy import column
+from sqlalchemy import Integer, String)
+
+(
+class User( UserMixin ,db.Model):
+     id = Column(Integer, primary_key=True)
+     username = Column(String(50), unique=True)
+     lastname = Column(String(50), unique=True)
+     email = Column(String(120), unique=True)
+     message= Column(String(50), unique=True)
+
+     )
+
+
+after that write code for db modal 
+
+than write python in terminal  (note these should be done in new python adter exit)
+than write (from  main import db)
+than (db.creat_all())
+than (from main import User) note. {first letter should be in capital}
+than (user = User.query.all())
+than (user ) these will show you empyt [] becuse modal is empyt
+
+now we can check that our data is stored or not in terminal only by 
+ ( u=User(username='jay',lastname='singh',email='jay@gmail.com',message='hii'))
+ than (from app import db)
+ than ( db.session.add(user)  add data
+>>> db.session.commit()       commit data
+>>> user=User.query.all()        fetch data
+>>> user                          see data 
+[1 - jay])                        stored data
+>>> user[0].email                for email    ([0],will only work wehne we have stored more data in table)
+'ra@gmail.com'
+>>>
+
+
+------------------------------------
+now we store our form data in db
+
+firstyl IMPORT REQUEST FROM flask and resirect also
+than check the form html than write the same name in input of html given in modals
+than write post method and action as login in html form tag
+THAN WRITE CODE IN REGISTER ROUTE AND ADD GET POST METHOD 
+AND witre IF STATMENT FOR POST REQUEST
+(
+@app.route("/form" ,methods= ['GET', 'POST'])
+def form():
+  if request.method == 'POST':
+        username = request.form['username']
+        lastname= request.form['lastname']
+        email = request.form['email']
+        message = request.form['message']
+        user = User(username=username,
+                          lastname=lastname,
+                          email=email,message=message)
+        db.session.add(user)
+        db.session.commit()
+        return redirect("/login")         (first import redirect )
+)
+
+
+
+
+in these we write all request ass per inputs 
+than write statment for equalise both the names of input and modals 
+than add session 
+than commit session 
+than redirect to the login page
+AND RETURN HTML OF REGISTER PAGE 
+than 
+--------------------------------------------
+now flshing message
+fristy import flash
+
+for now skipt message flahing
+
+---------------------------------------------
+login page
+get html from bootstrap 
+than write post method and action as login ,and name in input of forms 
+
+
+now install flask login by coomand 
+(pip install flask-login )
+than import login manager,login_user,usermixin
+(form flask_login import loginmanager,login_user,UserMixin
+)
+now add usermixin to our User like this (class User( UserMixin,db.Model):)
+than add secret key 
+(app.config['SECRET_KEY']='thisissecret')
+now create object of login manager
+login_manager=LoginManager()
+than intialize it 
+(login_manager.init_app(app))
+now create loader
+@login_manager.user_loader
+def load_user(user_id):
+ return User.query.get(int(user_id))
+
+ than now set on login route
+
+
+@app.route("/login", methods = ['GET', 'POST'])
+def login():
+     if request.method == 'POST':
+      username = request.form['username']
+      email = request.form['email']
+      user=User.query.filter_by(username=username).first()  
+      if user and email==user.email:
+          login_user(user)                               (if usename is  enterd previousely it wil login)    
+          return redirect ('/')
+      else:
+         return("invalid data")                            (else it return to form page)
+         return redirect ('/form')
+      
+     return render_template ("login.html")
+
+-------------------------------------------------------
+now create logout buttn
+In layout.html create three more nav bar optins which are logout and current user and blogpost 
+(  <a href="">{{current_user.username}}</a>) like these two more optins , logout and blogpost
+than write if and else stament in layout .html to show these optin only when user is login
+
+
+   <a href="#about">ABOUT</a>
+            {% if current_user.is_authenticated%}
+            <a href="">{{current_user.username}}</a>
+            <a href="/logout">LOGOUT</a>
+            <a href="/blogpost">BLOG POST</a>
+            {%else%}
+            <a href="/form">FORM</a>
+            <a href="/login">LOGIN</a>
+            {%endif%}
+
+
+          than import  logout_user from flask_login
+            and create new route 
+            (
+  @app.route("/logout")
+  def logout():
+   logout_user()
+   return redirect ('/')
+    )
+
+    -------------------------------------------
+    now create blog .htnml page from old form  and than write three items in that form title and author and content 
+
+-----------------------------------------------
+creaate modals for title ,content and author 
+and import date time 
+
+class Bloger( UserMixin,db.Model):
+     blog_id = db.Column(db.Integer, primary_key=True)
+     tittle = db.Column(db.String(80),  nullable=False)
+     author= db.Column(db.String(20), nullable=False)
+    content = db.Column(db.text , nullable=False)
+    pub_date = db.Column(db.DateTime() , nullable=False, default=datetime.now(datetime.UTC))
+
+than us precivous initilaiize modals 
+than write python in terminal  (note these should be done in new python adter exit)
+than write (from  main import db)
+than (db.creat_all())
+than (from main import User) note. {first letter should be in capital}
+than (user = User.query.all())
+than (user ) these will show you empyt [] becuse modal is empyt
+
+now we can check that our data is stored or not in terminal only by 
+ ( u=User(username='jay',lastname='singh',email='jay@gmail.com',message='hii'))
+ than (from app import db)
+ than ( db.session.add(user)  add data
+>>> db.session.commit()       commit data
+>>> user=User.query.all()        fetch data
+>>> user                          see data 
+[1 - jay])                        stored data
+>>> user[0].email                for email    ([0],will only work wehne we have stored more data in table)
+'ra@gmail.com'
+----------------------------
+
+
+diplay blogs on home page
+(
+@app.route('/')
+def hello_world():
+    data=Bloger.query.all()
+    return render_template ("index.html" ,data=data)
+)
+and add these to html file of home page
+({% for blog in data %}
+{{blog.tittle}}
+<br>
+{{blog.author}}
+<br>
+{{blog.content}}
+<br>
+{{blog.pub_date}})
+--------------------------------
+decorate the home page for diplay blog 
+-------------------
+now store data after login 
+@app.route('/blog', methods = ['GET', 'POST'])
+def blog():
+     if request.method == 'POST':
+        tittle= request.form['tittle']
+        author= request.form['author']
+        content= request.form['content']
+        blog= Bloger(tittle=tittle,
+                          author=author,
+                          content=content)
+        db.session.add(blog)
+        db.session.commit()
+        return redirect('/')
+
+     return render_template ("blog.html")
+     ---------------------------------
+
+ now from home page we directly go to full page of blog in one click
+ @app.route("/blogpage/<int:id>", methods = ['GET', 'POST'])
+def blogpage(id):
+   blog=Bloger.query.get(id)
+   return render_template ("blogpage.html")
+
+give link of page to the continur reading button of index page
+ 
+       <a href="/blogpage/{{blog.blog_id}}" class="icon-link gap-1 icon-link-hover stretched-link">
+
+
+----------------------
+delet blog post 
+
+to delt blog create button  for delet and edit 
+than pase url like this 
+ <a class="btn_primary2" href= "/edit/{{blog.blog_id}}" , target="_blank">EDIT</a>
+      <a class="btn_primary1" href= "/delet/{{blog.blog_id}}" , target="_blank">DELET</a>
+    
+    than create route on app.py 
+    @app.route("/delet/<int:id>", methods = ['GET', 'POST'])
+def delet(id):
+   blog=Bloger.query.get(id)
+   db.session.delete(blog)
+   db.session.commit()
+
+   return redirect ('/')
+
+----------------------
+now edit blog
+create edit .html
+than copy the content of blg form 
+than cahnge action url to id 
+ <form action='/edit/{{blog.blog_id}}'
+
+ than add value of title ,author and content 
+  value="{{blog.tittle}}"
+   value="{{blog.author}}"
+   {{blog.content}}
+   than 
+   change value of sumbit button to edit
+   

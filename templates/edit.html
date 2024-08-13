@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block body %}
+<link rel="stylesheet" href="/static/form.css">
+<div class="formbody">
+
+   <div class="container">
+      <div class="text">
+           EDIT BLOG
+         </div>
+         <form action='/edit/{{blog.blog_id}}' method="POST">
+            <div class="form-row">
+               <div class="input-data">
+                  <input type="text"  name="tittle"   value="{{blog.tittle}}" required>
+                  <div class="underline"></div>
+                  <label for="">TITTLE</label>
+               </div>
+               <div class="input-data">
+                  <input type="text"  name="author" value="{{blog.author}}" required>
+                  <div class="underline"></div>
+                  <label for="">AUTHOR</label>
+               </div>
+            </div>
+           
+            <div class="form-row">
+               <div class="input-data textarea">
+                  <textarea rows="8" cols="80" name="content" required>{{blog.content}}</textarea>
+                  <br />
+                  <div class="underline"></div>
+                  <label for="">CONTENT</label>
+                  <br />
+                  <div class="form-row submit-btn">
+                     <div class="input-data">
+                        <div class="inner"></div>
+                        <input type="submit" value="EDIT">
+                     </div>
+                  </div>
+               </form>
+            </div>
+         </div>
+{% endblock %}

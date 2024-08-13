@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block body %}
+<link rel="stylesheet" href="/static/home.css">
+
+
+  {% for blog in data %}
+  <div class="blog_post">
+    
+    <div class="container_copy">
+      <h3>{{blog.pub_date}}</h3>
+      <h1>{{blog.tittle}}</h1>
+      <h3>{{blog.author}}</h3>
+      <p>{{blog.content}}</p>
+      <a class="btn_primary" href= "/blogpage/{{blog.blog_id}}" , target="_blank">Read More</a>
+    </div>
+    
+  </div>
+  
+  {% endfor %}
+
+
+
+
+{% endblock %}
